@@ -2795,7 +2795,11 @@ async function fetchLiveOdds() {
     const data = await resp.json();
     console.log('[fetchLiveOdds]', data);
 
-    if (!data.ok) throw new Error(data.error || 'Edge function error');
+    if (!data.ok) {
+      const probeInfo = (data.probeLog || []).join('\n');
+      dbg.textContent = 'Error: ' + (data.error || 'Edge function error') + (probeInfo ? '\n\nProbe log:\n' + probeInfo : '');
+      throw new Error(data.error || 'Edge function error');
+    }
 
     const { parsed = [], updated = [], dbError, raw_preview, url, oddsType = 'unknown', source: srcName = '' } = data;
 
