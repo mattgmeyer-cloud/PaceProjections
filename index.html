@@ -2794,6 +2794,7 @@ async function fetchLiveOdds() {
     );
     const data = await resp.json();
     console.log('[fetchLiveOdds]', data);
+    console.log('[fetchLiveOdds probeLog]\n' + (data.probeLog || []).join('\n'));
 
     if (!data.ok) {
       const probeInfo = (data.probeLog || []).join('\n');
