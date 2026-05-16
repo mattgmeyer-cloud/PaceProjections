@@ -2814,7 +2814,9 @@ async function fetchLiveOdds() {
 
     // Build debug summary
     const oddsLabel = oddsType === 'live-tote' ? '🟢 LIVE TOTE' : oddsType === 'morning-line' ? '🟡 Morning Line (ML)' : oddsType;
-    const dbColumn = data.dbColumn || (oddsType === 'live-tote' ? 'act_odds' : 'ml');
+    // Always write to act_odds when user clicks Live Odds — source page may
+    // label itself 'morning-line' even on race day when tote is open.
+    const dbColumn = 'act_odds';
     const colLabel = dbColumn === 'act_odds' ? 'Act. Odds' : 'ML';
     const lines = [
       'Source: ' + (srcName || '?') + '  |  Odds type: ' + oddsLabel + '  → writing to: ' + colLabel,
