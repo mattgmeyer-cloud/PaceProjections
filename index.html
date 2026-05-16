@@ -2810,8 +2810,8 @@ async function fetchLiveOdds() {
       const h = horses.find(x => x.post === itemPost);
       if (h && item.odds != null) {
         const val = parseFloat(parseFloat(item.odds).toFixed(1));
-        if (item.column === 'act_odds') h.act = val;
-        else h.ml = val;
+        // Live Odds always writes to act_odds
+        h.act = val;
       }
     }
     if (typeof renderHorseTable === 'function') renderHorseTable();
