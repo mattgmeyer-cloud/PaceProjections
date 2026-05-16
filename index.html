@@ -1976,14 +1976,17 @@ async function adminSaveHorseData(btn) {
     await _sb.from('race_profiles').update({ weights: adminWeights }).eq('id', _currentProfileId);
 
     // Update post_position, ml, and act_odds across ALL profiles for each horse.
-    // These are race-specific base data — same for every user, not per-user overrides.
+    // Uses SECURITY DEFINER RPC to bypass RLS — these are global base fields, not per-user.
     for (const h of horses) {
       if (!h._sbId) continue;
       const mlVal  = h.ml  != null ? parseFloat(parseFloat(h.ml).toFixed(1))  : null;
       const actVal = h.act != null ? parseFloat(parseFloat(h.act).toFixed(1)) : null;
-      await _sb.from('race_entries')
-        .update({ post_position: h.post, ml: mlVal, act_odds: actVal })
-        .eq('horse_id', h._sbId);
+      await _sb.rpc('admin_update_base_entry', {
+        p_horse_id: h._sbId,
+        p_post:     h.post,
+        p_ml:       mlVal,
+        p_act_odds: actVal
+      });
     }
 
     if (btn) { btn.textContent = '✓ Base Saved'; setTimeout(() => btn.textContent = 'Save Horse Data', 1800); }
