@@ -2844,7 +2844,10 @@ async function fetchLiveOdds() {
 
   } catch(e) {
     console.error('[fetchLiveOdds]', e);
-    dbg.textContent = 'Error: ' + e.message;
+    // Only overwrite debug text if we haven't already set it with probe log details
+    if (!dbg.textContent || dbg.textContent === 'Calling Edge Function…') {
+      dbg.textContent = 'Error: ' + e.message;
+    }
     btn.textContent = '✗ Failed';
     setTimeout(() => { btn.textContent = origText; btn.disabled = false; }, 3000);
   }
